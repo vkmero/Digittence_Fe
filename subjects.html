@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subjects | Digittence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuth()">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <h2>Subjects</h2>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <section class="features">
+        <h2>Manage Subjects</h2>
+
+        <!-- Add Subject Form -->
+        <form id="addSubjectForm">
+            <input type="text" id="subjectName" placeholder="Subject Name" required>
+            <input type="text" id="classId" placeholder="Class ID" required>
+            <button type="submit" class="btn-primary">Add Subject</button>
+        </form>
+
+        <!-- Subject Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                </tr>
+            </thead>
+            <tbody id="subjectsTable"></tbody>
+        </table>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        const subjectsTable = document.getElementById('subjectsTable');
+        const addSubjectForm = document.getElementById('addSubjectForm');
+
+        async function loadSubjects(classId) {
+            try {
+                const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
+                subjectsTable.innerHTML = '';
+                subjects.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${s.name}</td>`;
+                    subjectsTable.appendChild(tr);
+                });
+            } catch(err) {
+                alert(err.message);
+            }
+        }
+
+        addSubjectForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            try {
+                const name = document.getElementById('subjectName').value;
+                const classId = document.getElementById('classId').value;
+                await fetchAPI('http://localhost:5000/api/subjects', 'POST', { name, class: classId });
+                addSubjectForm.reset();
+                loadSubjects(classId);
+            } catch(err) { alert(err.message); }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+/* ===============================
+   GLOBAL RESET & FONT
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: url("https://images.unsplash.com/photo-1519389950473-47ba0277781c")
+        no-repeat center / cover;
+    min-height: 100vh;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: -1;
+}
+
+/* ===============================
+   NAVBAR
+================================ */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 60px;
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+}
+
+.nav-btn {
+    padding: 8px 22px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.nav-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* ===============================
+   HERO SECTION
+================================ */
+.hero-section {
+    display: flex;
+    align-items: center;
+    padding: 60px;
+    gap: 50px;
+}
+
+.hero-content {
+    flex: 1;
+    animation: fadeUp 1.2s ease;
+}
+
+.hero-content h1 {
+    font-size: 54px;
+}
+
+.hero-content h2 {
+    margin: 15px 0;
+    color: #00e5ff;
+    min-height: 32px;
+}
+
+.hero-content p {
+    max-width: 520px;
+    opacity: 0.9;
+    margin-bottom: 25px;
+}
+
+.hero-buttons a {
+    margin-right: 15px;
+}
+
+/* Buttons */
+.btn-primary {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #6a5acd, #00e5ff);
+    border-radius: 25px;
+    color: #000;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+}
+
+.btn-secondary {
+    padding: 12px 28px;
+    border: 1px solid #fff;
+    border-radius: 25px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px);
+}
+
+/* Hero Image */
+.hero-image img {
+    width: 420px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    animation: float 4s ease-in-out infinite;
+}
+
+/* ===============================
+   FEATURES
+================================ */
+.features {
+    padding: 80px 60px;
+    text-align: center;
+}
+
+.features h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+.feature-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    padding: 25px;
+    border-radius: 18px;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* ===============================
+   GLASS FORM
+================================ */
+.glass-form {
+    max-width: 400px;
+    margin: 60px auto;
+    background: rgba(255,255,255,0.18);
+    padding: 35px;
+    border-radius: 22px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+}
+
+.form-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* ===============================
+   FLOATING INPUTS
+================================ */
+.input-group {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+}
+
+.input-group label {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.7);
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:valid + label {
+    top: -8px;
+    left: 10px;
+    font-size: 12px;
+    color: #00e5ff;
+    background: rgba(0,0,0,0.4);
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.input-group input:focus {
+    border-color: #00e5ff;
+    box-shadow: 0 0 14px rgba(0,229,255,0.4);
+}
+
+/* ===============================
+   PASSWORD TOGGLE
+================================ */
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.toggle-password:hover {
+    opacity: 1;
+}
+
+/* ===============================
+   RIPPLE BUTTON
+================================ */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 10%);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.6s, opacity 1s;
+}
+
+.ripple:active::after {
+    transform: scale(3);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* ===============================
+   TABLES
+================================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+}
+
+th {
+    background: rgba(255,255,255,0.2);
+}
+
+tr:nth-child(even) {
+    background: rgba(255,255,255,0.05);
+}
+
+/* ===============================
+   ANIMATIONS
+================================ */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 900px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-image img {
+        width: 300px;
+    }
+}
+
+@media (max-width: 500px) {
+    .feature-cards {
+        grid-template-columns: 1fr;
+    }
+}

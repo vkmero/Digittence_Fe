@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance | Digittence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuth()">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <h2>Attendance</h2>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <section class="features">
+        <h2>Mark Attendance</h2>
+
+        <!-- Attendance Form -->
+        <form id="attendanceForm">
+            <input type="text" id="classId" placeholder="Class ID" required>
+            <input type="text" id="subject" placeholder="Subject Name" required>
+            <input type="date" id="date" required>
+            <input type="number" id="hours" placeholder="Hours" required>
+            <textarea id="records" placeholder='Enter JSON Array of Records [{"student":"studentId","status":"P"},...]' required></textarea>
+            <button type="submit" class="btn-primary">Submit Attendance</button>
+        </form>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        const attendanceForm = document.getElementById('attendanceForm');
+
+        attendanceForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            try {
+                const classId = document.getElementById('classId').value;
+                const subject = document.getElementById('subject').value;
+                const date = document.getElementById('date').value;
+                const hours = Number(document.getElementById('hours').value);
+                const records = JSON.parse(document.getElementById('records').value);
+
+                await fetchAPI('http://localhost:5000/api/attendance', 'POST', { class: classId, subject, date, hours, records });
+                alert('Attendance marked successfully!');
+                attendanceForm.reset();
+            } catch(err) {
+                alert(err.message);
+            }
+        });
+    </script>
+</body>
+</html>

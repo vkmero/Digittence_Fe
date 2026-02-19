@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digittence | Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<!-- LOGIN SECTION -->
+<section class="hero-section" style="justify-content:center;">
+    
+    <form class="glass-form">
+        <h2 class="form-title">Faculty Login</h2>
+
+        <div class="input-group">
+            <input type="email" id="email" required>
+            <label>Email</label>
+        </div>
+
+        <div class="input-group password-group">
+            <input type="password" id="password" required>
+            <label>Password</label>
+            <span class="toggle-password" onclick="togglePassword()">👁️</span>
+        </div>
+
+        <button type="button" id="loginBtn" class="btn-primary ripple" style="width:100%;">
+            Login
+        </button>
+
+        <p style="margin-top:15px; text-align:center;">
+            Don't have an account?
+            <a href="register.html" style="color:#00e5ff;">Register</a>
+        </p>
+    </form>
+
+</section>
+
+<!-- SCRIPT -->
+<script>
+function togglePassword() {
+    const pass = document.getElementById("password");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if(!email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    try {
+        const res = await fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) return alert(data.message);
+
+        localStorage.setItem('token', data.token);
+        window.location.href = 'dashboard.html';
+
+    } catch (err) {
+        alert("Server not reachable");
+    }
+});
+</script>
+
+</body>
+</html>

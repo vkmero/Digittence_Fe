@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Students | Digittence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuth()">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <h2>Students</h2>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <section class="features">
+        <h2>Manage Students</h2>
+
+        <!-- Add Student Form -->
+        <form id="addStudentForm">
+            <input type="text" id="studentName" placeholder="Student Name" required>
+            <input type="text" id="rollNo" placeholder="Roll Number" required>
+            <input type="text" id="classId" placeholder="Class ID" required>
+            <button type="submit" class="btn-primary">Add Student</button>
+        </form>
+
+        <!-- Student Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentsTable"></tbody>
+        </table>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        const studentsTable = document.getElementById('studentsTable');
+        const addStudentForm = document.getElementById('addStudentForm');
+
+        async function loadStudents(classId) {
+            try {
+                const students = await fetchAPI(`http://localhost:5000/api/students/${classId}`);
+                studentsTable.innerHTML = '';
+                students.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${s.rollNo}</td>
+                        <td>${s.name}</td>
+                        <td>
+                            <button onclick="deleteStudent('${s._id}', '${classId}')">Delete</button>
+                        </td>
+                    `;
+                    studentsTable.appendChild(tr);
+                });
+            } catch(err) {
+                alert(err.message);
+            }
+        }
+
+        addStudentForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            try {
+                const name = document.getElementById('studentName').value;
+                const rollNo = document.getElementById('rollNo').value;
+                const classId = document.getElementById('classId').value;
+                await fetchAPI('http://localhost:5000/api/students', 'POST', { name, rollNo, class: classId });
+                addStudentForm.reset();
+                loadStudents(classId);
+            } catch(err) { alert(err.message); }
+        });
+
+        async function deleteStudent(id, classId) {
+            if(confirm('Delete this student?')) {
+                await fetchAPI(`http://localhost:5000/api/students/${id}`, 'DELETE');
+                loadStudents(classId);
+            }
+        }
+    </script>
+</body>
+</html>

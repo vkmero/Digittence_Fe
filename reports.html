@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports | Digittence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuth()">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <h2>Reports</h2>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <section class="features">
+        <h2>Generate Attendance Report</h2>
+
+        <form id="reportForm">
+            <input type="text" id="classId" placeholder="Class ID" required>
+            <input type="date" id="startDate" placeholder="Start Date" required>
+            <input type="date" id="endDate" placeholder="End Date" required>
+            <button type="submit" class="btn-primary">Generate Excel</button>
+        </form>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        const reportForm = document.getElementById('reportForm');
+
+        reportForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            try {
+                const classId = document.getElementById('classId').value;
+                const start = document.getElementById('startDate').value;
+                const end = document.getElementById('endDate').value;
+
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5000/api/report', {
+                    method: 'POST',
+                    headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ classId, start, end })
+                });
+
+                if(!res.ok) throw new Error('Failed to generate report');
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'attendance_report.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } catch(err) {
+                alert(err.message);
+            }
+        });
+    </script>
+</body>
+</html>

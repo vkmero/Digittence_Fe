@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Digittence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuth()">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <h2>Welcome, <span id="facultyName"></span></h2>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <section class="features">
+        <h2>Dashboard</h2>
+        <div class="feature-cards">
+            <div class="card" onclick="goToPage('students.html')">
+                <h3>Students</h3>
+                <p>Manage students in your classes.</p>
+            </div>
+            <div class="card" onclick="goToPage('subjects.html')">
+                <h3>Subjects</h3>
+                <p>Manage subjects for each class.</p>
+            </div>
+            <div class="card" onclick="goToPage('attendance.html')">
+                <h3>Attendance</h3>
+                <p>Mark student attendance quickly.</p>
+            </div>
+            <div class="card" onclick="goToPage('reports.html')">
+                <h3>Reports</h3>
+                <p>Generate and download attendance reports.</p>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('facultyName').innerText = localStorage.getItem('name');
+    </script>
+</body>
+</html>
