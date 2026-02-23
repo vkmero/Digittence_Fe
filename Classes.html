@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Classes | Digittence</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuth(); loadClasses()">
+
+<div class="overlay"></div>
+
+<nav class="navbar">
+    <h2>Classes</h2>
+    <button class="nav-btn" onclick="logout()">Logout</button>
+</nav>
+
+<section class="features">
+    <h2>Manage Classes</h2>
+
+    <form id="addClassForm" class="class-form">
+        <div class="form-group">
+            <label>Class Name</label>
+            <input type="text" id="className" placeholder="Enter class name (e.g., CSE-3A)" required>
+        </div>
+        <button class="create-class-btn">+ Create Class</button>
+    </form>
+
+    <div id="classList" class="feature-cards"></div>
+</section>
+
+<script src="script.js"></script>
+<script>
+const classList = document.getElementById('classList');
+const addClassForm = document.getElementById('addClassForm');
+
+async function loadClasses() {
+    const classes = await fetchAPI('http://localhost:5000/api/classes');
+    classList.innerHTML = '';
+
+    classes.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+            <div class="class-card-top">
+                <h3>${c.className}</h3>
+                <div class="class-actions">
+                    <button class="icon-btn open-btn" onclick="openClass('${c._id}')">Open</button>
+                    <button class="icon-btn edit-btn-class" onclick="editClass('${c._id}', '${c.className}')">Edit</button>
+                    <button class="icon-btn delete-btn-class" onclick="deleteClass('${c._id}')">Delete</button>
+                </div>
+            </div>
+        `;
+        classList.appendChild(div);
+    });
+}
+
+addClassForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const className = document.getElementById('className').value;
+
+    await fetchAPI('http://localhost:5000/api/classes', 'POST', { className });
+
+    addClassForm.reset();
+    loadClasses();
+});
+
+function openClass(id) {
+    localStorage.setItem('selectedClass', id);
+    window.location.href = 'class.html';
+}
+
+async function editClass(id, currentName) {
+    const newName = prompt("Enter new class name:", currentName);
+    if (!newName || newName.trim() === "") return;
+
+    await fetchAPI(
+        `http://localhost:5000/api/classes/${id}`,
+        "PUT",
+        { className: newName }
+    );
+
+    loadClasses();
+}
+
+async function deleteClass(id) {
+    const confirmDelete = confirm("Are you sure you want to delete this class?");
+    if (!confirmDelete) return;
+
+    await fetchAPI(
+        `http://localhost:5000/api/classes/${id}`,
+        "DELETE"
+    );
+
+    loadClasses();
+}
+
+</script>
+
+</body>
+</html>

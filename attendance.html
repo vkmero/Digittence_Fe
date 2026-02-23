@@ -1,53 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Attendance | Digittence</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Attendance | Digittence</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body onload="checkAuth()">
-    <div class="overlay"></div>
-    <nav class="navbar">
-        <h2>Attendance</h2>
-        <button class="nav-btn" onclick="logout()">Logout</button>
-    </nav>
 
-    <section class="features">
-        <h2>Mark Attendance</h2>
+<body onload="checkAuth(); initAttendance()">
 
-        <!-- Attendance Form -->
-        <form id="attendanceForm">
-            <input type="text" id="classId" placeholder="Class ID" required>
-            <input type="text" id="subject" placeholder="Subject Name" required>
-            <input type="date" id="date" required>
-            <input type="number" id="hours" placeholder="Hours" required>
-            <textarea id="records" placeholder='Enter JSON Array of Records [{"student":"studentId","status":"P"},...]' required></textarea>
-            <button type="submit" class="btn-primary">Submit Attendance</button>
-        </form>
-    </section>
+<div class="overlay"></div>
 
-    <script src="script.js"></script>
-    <script>
-        const attendanceForm = document.getElementById('attendanceForm');
+<nav class="navbar">
+    <h2>Mark Attendance</h2>
+    <button class="nav-btn" onclick="logout()">Logout</button>
+</nav>
 
-        attendanceForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            try {
-                const classId = document.getElementById('classId').value;
-                const subject = document.getElementById('subject').value;
-                const date = document.getElementById('date').value;
-                const hours = Number(document.getElementById('hours').value);
-                const records = JSON.parse(document.getElementById('records').value);
+<section class="features">
 
-                await fetchAPI('http://localhost:5000/api/attendance', 'POST', { class: classId, subject, date, hours, records });
-                alert('Attendance marked successfully!');
-                attendanceForm.reset();
-            } catch(err) {
-                alert(err.message);
-            }
+<!-- Top Controls -->
+<div class="control-card">
+
+    <input type="date" id="date" required>
+    <input type="number" id="hours" placeholder="Hours" required>
+
+    <select id="subjectSelect"></select>
+
+    <button class="btn btn-secondary" onclick="openSubjectModal()">+ Subject</button>
+    <button class="btn btn-primary" onclick="openStudentModal()">+ Student</button>
+
+</div>
+
+<!-- Students Table -->
+<table>
+<thead>
+<tr>
+    <th>Name</th>
+    <th>Roll No</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+</thead>
+<tbody id="studentsTable"></tbody>
+</table>
+
+<br>
+
+<button class="add-student-main" onclick="openStudentModal()">+ Add Student</button>
+<button class="btn-primary" onclick="saveAttendance()">Save Attendance</button>
+
+</section>
+
+<!-- Subject Modal -->
+<div class="modal" id="subjectModal">
+    <div class="modal-content">
+        <h3>Add Subject</h3>
+        <input type="text" id="newSubjectName" placeholder="Subject Name">
+        <button class="btn btn-primary" onclick="addSubject()">Add</button>
+        <button class="btn btn-danger" onclick="closeSubjectModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- Student Modal -->
+<div class="modal" id="studentModal">
+    <div class="modal-content">
+        <h3>Add Student</h3>
+        <input type="text" id="newStudentName" placeholder="Name">
+        <input type="text" id="newStudentRoll" placeholder="Roll No">
+        <button class="btn btn-primary" onclick="addStudent()">Add</button>
+        <button class="btn btn-danger" onclick="closeStudentModal()">Cancel</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+let students = [];
+let editingStudentId = null;
+
+function getClassId() {
+    const id = localStorage.getItem("selectedClass");
+    if (!id) window.location.href = "classes.html";
+    return id;
+}
+
+async function initAttendance() {
+    const classId = getClassId();
+    document.getElementById("date").valueAsDate = new Date();
+    await loadSubjectsDropdown(classId);
+    await loadStudentsTable(classId);
+}
+
+async function loadSubjectsDropdown(classId) {
+    const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
+    const select = document.getElementById("subjectSelect");
+    select.innerHTML = "";
+
+    subjects.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.name;
+        opt.textContent = s.name;
+        select.appendChild(opt);
+    });
+}
+
+async function loadStudentsTable(classId) {
+    students = await fetchAPI(`http://localhost:5000/api/students/${classId}`);
+    const tbody = document.getElementById("studentsTable");
+    tbody.innerHTML = "";
+
+    students.forEach(s => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${s.name}</td>
+            <td>${s.rollNo}</td>
+            <td>
+                <button id="p-${s._id}" class="attendance-btn inactive"
+                    onclick="setStatus('${s._id}','P')">P</button>
+
+                <button id="a-${s._id}" class="attendance-btn inactive"
+                    onclick="setStatus('${s._id}','A')">A</button>
+            </td>
+            <td>
+                <button class="action-btn edit-btn"
+                    onclick="openEditStudent('${s._id}','${s.name}','${s.rollNo}')">Edit</button>
+
+                <button class="action-btn delete-btn"
+                    onclick="deleteStudentRow('${s._id}')">Delete</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function setStatus(studentId, status) {
+    const student = students.find(s => String(s._id) === String(studentId));
+    if (!student) return;
+
+    student.status = status;
+
+    const pBtn = document.getElementById(`p-${studentId}`);
+    const aBtn = document.getElementById(`a-${studentId}`);
+    if (!pBtn || !aBtn) return;
+
+    // Reset both buttons
+    pBtn.classList.remove("present", "absent", "inactive");
+    aBtn.classList.remove("present", "absent", "inactive");
+
+    // Apply new styles
+    if (status === "P") {
+        pBtn.classList.add("present");
+        aBtn.classList.add("inactive");
+    } else {
+        aBtn.classList.add("absent");
+        pBtn.classList.add("inactive");
+    }
+}
+/* ---------- SUBJECT MODAL ---------- */
+
+function openSubjectModal() {
+    document.getElementById("newSubjectName").value = "";
+    document.getElementById("subjectModal").style.display = "flex";
+}
+
+function closeSubjectModal() {
+    document.getElementById("subjectModal").style.display = "none";
+}
+
+async function addSubject() {
+    const name = document.getElementById("newSubjectName").value.trim();
+    if (!name) return;
+
+    await fetchAPI("http://localhost:5000/api/subjects", "POST", {
+        name,
+        class: getClassId()
+    });
+
+    closeSubjectModal();
+    await loadSubjectsDropdown(getClassId());
+}
+
+/* ---------- STUDENT MODAL ---------- */
+
+function openStudentModal() {
+    editingStudentId = null;
+    document.getElementById("newStudentName").value = "";
+    document.getElementById("newStudentRoll").value = "";
+    document.getElementById("studentModal").style.display = "flex";
+}
+
+function openEditStudent(id, name, rollNo) {
+    editingStudentId = id;
+    document.getElementById("newStudentName").value = name;
+    document.getElementById("newStudentRoll").value = rollNo;
+    document.getElementById("studentModal").style.display = "flex";
+}
+
+function closeStudentModal() {
+    document.getElementById("studentModal").style.display = "none";
+}
+
+async function addStudent() {
+    const name = document.getElementById("newStudentName").value.trim();
+    const rollNo = document.getElementById("newStudentRoll").value.trim();
+
+    if (!name || !rollNo) return;
+
+    if (editingStudentId) {
+        await fetchAPI(`http://localhost:5000/api/students/${editingStudentId}`, "PUT", {
+            name,
+            rollNo
         });
-    </script>
+    } else {
+        await fetchAPI("http://localhost:5000/api/students", "POST", {
+            name,
+            rollNo,
+            class: getClassId()
+        });
+    }
+
+    closeStudentModal();
+    await loadStudentsTable(getClassId());
+}
+
+async function deleteStudentRow(id) {
+    if (!confirm("Delete student?")) return;
+    await fetchAPI(`http://localhost:5000/api/students/${id}`, "DELETE");
+    await loadStudentsTable(getClassId());
+}
+
+/* ---------- SAVE ATTENDANCE ---------- */
+
+async function saveAttendance() {
+    const classId = getClassId();
+    const subject = document.getElementById("subjectSelect").value;
+    const date = document.getElementById("date").value;
+    const hours = Number(document.getElementById("hours").value);
+
+    if (!subject || !date || !hours) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    const records = students.map(s => ({
+        student: s._id,
+        status: s.status || "A"
+    }));
+
+    await fetchAPI("http://localhost:5000/api/attendance", "POST", {
+        class: classId,
+        subject,
+        date,
+        hours,
+        records
+    });
+
+    alert("Attendance Saved Successfully!");
+}
+</script>
+
 </body>
 </html>

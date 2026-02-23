@@ -23,9 +23,14 @@
 
 <!-- LOGIN FORM -->
 <section class="hero-section" style="justify-content:center;">
-    <form id="loginForm" class="glass-form">
+    <form id="registerForm" class="glass-form">
 
-        <h2 class="form-title">Faculty Login</h2>
+        <h2 class="form-title">Faculty Registration</h2>
+
+        <div class="input-group">
+            <input type="text" id="name" required>
+            <label>Full Name</label>
+        </div>
 
         <div class="input-group">
             <input type="email" id="email" required>
@@ -39,13 +44,12 @@
         </div>
 
         <button type="submit" class="btn-primary ripple" style="width:100%;">
-            Login
+            Register
         </button>
 
         <p style="margin-top:15px; text-align:center;">
-            <a href="forgot-password.html" class="btn-secondary">
-                Forgot Password?
-            </a>
+            Already have an account?
+            <a href="login.html" style="color:#00e5ff;">Login</a>
         </p>
 
     </form>
@@ -59,28 +63,24 @@ function togglePassword() {
     pass.type = pass.type === "password" ? "text" : "password";
 }
 
-document.getElementById('loginForm').addEventListener('submit', async e => {
+document.getElementById('registerForm').addEventListener('submit', async e => {
     e.preventDefault();
 
     try {
+        const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        const res = await fetch('http://localhost:5000/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type':'application/json' },
-            body: JSON.stringify({ email, password })
+        await fetchAPI('http://localhost:5000/api/auth/register', 'POST', {
+            name,
+            email,
+            password
         });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
+        alert("Registration successful! Please login.");
+        window.location.href = 'login.html';
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('name', data.name);
-
-        window.location.href = 'dashboard.html';
-
-    } catch (err) {
+    } catch(err) {
         alert(err.message);
     }
 });

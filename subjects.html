@@ -7,8 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body onload="checkAuth()">
+<body onload="checkAuth(); initSubjects()">
     <div class="overlay"></div>
+
     <nav class="navbar">
         <h2>Subjects</h2>
         <button class="nav-btn" onclick="logout()">Logout</button>
@@ -17,14 +18,11 @@
     <section class="features">
         <h2>Manage Subjects</h2>
 
-        <!-- Add Subject Form -->
         <form id="addSubjectForm">
             <input type="text" id="subjectName" placeholder="Subject Name" required>
-            <input type="text" id="classId" placeholder="Class ID" required>
             <button type="submit" class="btn-primary">Add Subject</button>
         </form>
 
-        <!-- Subject Table -->
         <table>
             <thead>
                 <tr>
@@ -35,35 +33,56 @@
         </table>
     </section>
 
-    <script src="script.js"></script>
-    <script>
-        const subjectsTable = document.getElementById('subjectsTable');
-        const addSubjectForm = document.getElementById('addSubjectForm');
+<script src="script.js"></script>
+<script>
+const subjectsTable = document.getElementById('subjectsTable');
+const addSubjectForm = document.getElementById('addSubjectForm');
 
-        async function loadSubjects(classId) {
-            try {
-                const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
-                subjectsTable.innerHTML = '';
-                subjects.forEach(s => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${s.name}</td>`;
-                    subjectsTable.appendChild(tr);
-                });
-            } catch(err) {
-                alert(err.message);
-            }
-        }
+function getClassId() {
+    const classId = localStorage.getItem('selectedClass');
+    if (!classId) {
+        alert("No class selected.");
+        window.location.href = "classes.html";
+    }
+    return classId;
+}
 
-        addSubjectForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            try {
-                const name = document.getElementById('subjectName').value;
-                const classId = document.getElementById('classId').value;
-                await fetchAPI('http://localhost:5000/api/subjects', 'POST', { name, class: classId });
-                addSubjectForm.reset();
-                loadSubjects(classId);
-            } catch(err) { alert(err.message); }
+async function initSubjects() {
+    loadSubjects(getClassId());
+}
+
+async function loadSubjects(classId) {
+    try {
+        const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
+        subjectsTable.innerHTML = '';
+
+        subjects.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${s.name}</td>`;
+            subjectsTable.appendChild(tr);
         });
-    </script>
+    } catch(err) {
+        alert(err.message);
+    }
+}
+
+addSubjectForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+        const name = document.getElementById('subjectName').value;
+        const classId = getClassId();
+
+        await fetchAPI('http://localhost:5000/api/subjects', 'POST', {
+            name,
+            class: classId
+        });
+
+        addSubjectForm.reset();
+        loadSubjects(classId);
+    } catch(err) {
+        alert(err.message);
+    }
+});
+</script>
 </body>
 </html>

@@ -36,6 +36,10 @@ const logout = () => {
     window.location.href = 'login.html';
 };
 
+function goToPage(page) {
+    window.location.href = page;
+}
+
 // ================================
 // Login & Register Pages
 // ================================
