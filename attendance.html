@@ -222,30 +222,38 @@ async function deleteStudentRow(id) {
 
 
 async function saveAttendance() {
-    const classId = getClassId();
-    const subject = document.getElementById("subjectSelect").value;
-    const date = document.getElementById("date").value;
-    const hours = Number(document.getElementById("hours").value);
+    try {
+        const classId = getClassId();
+        const subject = document.getElementById("subjectSelect").value;
+        const date = document.getElementById("date").value;
+        const hours = Number(document.getElementById("hours").value);
 
-    if (!subject || !date || !hours) {
-        alert("Please fill all fields.");
-        return;
+        if (!subject || !date || !hours) {
+            alert("Please fill all fields.");
+            return;
+        }
+
+        const records = students.map(s => ({
+            student: s._id,
+            status: s.status || "A"
+        }));
+
+        await fetchAPI("http://localhost:5000/api/attendance", "POST", {
+            class: classId,
+            subject,
+            date,
+            hours,
+            records
+        });
+
+        alert("Attendance Saved Successfully!");
+
+        students.forEach(s => delete s.status);
+        await loadStudentsTable(classId);
+
+    } catch (error) {
+        alert(error.message);
     }
-
-    const records = students.map(s => ({
-        student: s._id,
-        status: s.status || "A"
-    }));
-
-    await fetchAPI("http://localhost:5000/api/attendance", "POST", {
-        class: classId,
-        subject,
-        date,
-        hours,
-        records
-    });
-
-    alert("Attendance Saved Successfully!");
 }
 </script>
 
