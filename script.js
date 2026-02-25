@@ -1,6 +1,3 @@
-// ================================
-// Global Config
-// ================================
 const fetchAPI = async (url, method = 'GET', data = null) => {
     const token = localStorage.getItem('token');
     const headers = { 'Content-Type': 'application/json' };
@@ -15,9 +12,6 @@ const fetchAPI = async (url, method = 'GET', data = null) => {
     return resData;
 };
 
-// ================================
-// Auth Utilities
-// ================================
 const saveAuth = ({ token, facultyId, name, email }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('facultyId', facultyId);
@@ -40,9 +34,6 @@ function goToPage(page) {
     window.location.href = page;
 }
 
-// ================================
-// Login & Register Pages
-// ================================
 async function loginUser(email, password) {
     const data = await fetchAPI('http://localhost:5000/api/auth/login', 'POST', { email, password });
     saveAuth(data);
@@ -55,9 +46,6 @@ async function registerUser(name, email, password) {
     window.location.href = 'login.html';
 }
 
-// ================================
-// Students Management
-// ================================
 async function loadStudents(classId, tableBodyId) {
     const students = await fetchAPI(`http://localhost:5000/api/students/${classId}`);
     const tbody = document.getElementById(tableBodyId);
@@ -82,9 +70,6 @@ async function deleteStudent(id, classId, tableBodyId) {
     }
 }
 
-// ================================
-// Subjects Management
-// ================================
 async function loadSubjects(classId, tableBodyId) {
     const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
     const tbody = document.getElementById(tableBodyId);
@@ -96,9 +81,6 @@ async function loadSubjects(classId, tableBodyId) {
     });
 }
 
-// ================================
-// Attendance Submission
-// ================================
 async function submitAttendance(formId) {
     const form = document.getElementById(formId);
     form.addEventListener('submit', async e => {
@@ -119,9 +101,6 @@ async function submitAttendance(formId) {
     });
 }
 
-// ================================
-// Reports Generation
-// ================================
 async function generateReport(formId) {
     const form = document.getElementById(formId);
     form.addEventListener('submit', async e => {

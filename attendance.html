@@ -17,7 +17,6 @@
 
 <section class="features">
 
-<!-- Top Controls -->
 <div class="control-card">
 
     <input type="date" id="date" required>
@@ -30,7 +29,6 @@
 
 </div>
 
-<!-- Students Table -->
 <table>
 <thead>
 <tr>
@@ -50,7 +48,6 @@
 
 </section>
 
-<!-- Subject Modal -->
 <div class="modal" id="subjectModal">
     <div class="modal-content">
         <h3>Add Subject</h3>
@@ -60,7 +57,6 @@
     </div>
 </div>
 
-<!-- Student Modal -->
 <div class="modal" id="studentModal">
     <div class="modal-content">
         <h3>Add Student</h3>
@@ -142,11 +138,9 @@ function setStatus(studentId, status) {
     const aBtn = document.getElementById(`a-${studentId}`);
     if (!pBtn || !aBtn) return;
 
-    // Reset both buttons
     pBtn.classList.remove("present", "absent", "inactive");
     aBtn.classList.remove("present", "absent", "inactive");
 
-    // Apply new styles
     if (status === "P") {
         pBtn.classList.add("present");
         aBtn.classList.add("inactive");
@@ -155,7 +149,6 @@ function setStatus(studentId, status) {
         pBtn.classList.add("inactive");
     }
 }
-/* ---------- SUBJECT MODAL ---------- */
 
 function openSubjectModal() {
     document.getElementById("newSubjectName").value = "";
@@ -179,7 +172,6 @@ async function addSubject() {
     await loadSubjectsDropdown(getClassId());
 }
 
-/* ---------- STUDENT MODAL ---------- */
 
 function openStudentModal() {
     editingStudentId = null;
@@ -228,7 +220,6 @@ async function deleteStudentRow(id) {
     await loadStudentsTable(getClassId());
 }
 
-/* ---------- SAVE ATTENDANCE ---------- */
 
 async function saveAttendance() {
     const classId = getClassId();

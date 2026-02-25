@@ -1,6 +1,3 @@
-/* ===============================
-   GLOBAL RESET & FONT
-================================ */
 * {
     margin: 0;
     padding: 0;
@@ -16,7 +13,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Overlay */
 .overlay {
     position: fixed;
     inset: 0;
@@ -24,9 +20,6 @@ body {
     z-index: -1;
 }
 
-/* ===============================
-   NAVBAR
-================================ */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -54,9 +47,6 @@ body {
     transform: translateY(-3px);
 }
 
-/* ===============================
-   HERO SECTION
-================================ */
 .hero-section {
     display: flex;
     align-items: center;
@@ -89,7 +79,6 @@ body {
     margin-right: 15px;
 }
 
-/* Buttons */
 .btn-primary {
     padding: 12px 28px;
     background: linear-gradient(135deg, #6a5acd, #00e5ff);
@@ -120,7 +109,6 @@ body {
     transform: translateY(-3px);
 }
 
-/* Hero Image */
 .hero-image img {
     width: 420px;
     border-radius: 20px;
@@ -128,9 +116,6 @@ body {
     animation: float 4s ease-in-out infinite;
 }
 
-/* ===============================
-   FEATURES
-================================ */
 .features {
     padding: 80px 60px;
     text-align: center;
@@ -160,9 +145,6 @@ body {
     transform: translateY(-10px);
 }
 
-/* ===============================
-   GLASS FORM
-================================ */
 .glass-form {
     max-width: 400px;
     margin: 60px auto;
@@ -178,9 +160,6 @@ body {
     margin-bottom: 30px;
 }
 
-/* ===============================
-   FLOATING INPUTS
-================================ */
 .input-group {
     position: relative;
     margin-bottom: 28px;
@@ -224,9 +203,6 @@ body {
     box-shadow: 0 0 14px rgba(0,229,255,0.4);
 }
 
-/* ===============================
-   PASSWORD TOGGLE
-================================ */
 .password-group {
     position: relative;
 }
@@ -244,9 +220,6 @@ body {
     opacity: 1;
 }
 
-/* ===============================
-   RIPPLE BUTTON
-================================ */
 .ripple {
     position: relative;
     overflow: hidden;
@@ -268,9 +241,6 @@ body {
     transition: 0s;
 }
 
-/* ===============================
-   TABLES
-================================ */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -293,9 +263,6 @@ tr:nth-child(even) {
     background: rgba(255,255,255,0.05);
 }
 
-/* ===============================
-   ANIMATIONS
-================================ */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(40px); }
     to { opacity: 1; transform: translateY(0); }
@@ -306,9 +273,6 @@ tr:nth-child(even) {
     50% { transform: translateY(-15px); }
 }
 
-/* ===============================
-   RESPONSIVE
-================================ */
 @media (max-width: 900px) {
     .hero-section {
         flex-direction: column;
@@ -326,7 +290,6 @@ tr:nth-child(even) {
     }
 }
 
-/* ---------- Control Card ---------- */
 .control-card {
     background: rgba(255,255,255,0.08);
     backdrop-filter: blur(8px);
@@ -348,7 +311,6 @@ tr:nth-child(even) {
     min-width: 150px;
 }
 
-/* ---------- Buttons ---------- */
 .btn {
     padding: 8px 14px;
     border-radius: 6px;
@@ -376,7 +338,6 @@ tr:nth-child(even) {
     opacity: 0.85;
 }
 
-/* ---------- Attendance Toggle ---------- */
 .attendance-btn {
     width: 40px;
     height: 40px;
@@ -402,7 +363,6 @@ tr:nth-child(even) {
     color: #444;
 }
 
-/* ---------- Modal ---------- */
 .modal {
     position: fixed;
     top: 0;
@@ -428,7 +388,6 @@ tr:nth-child(even) {
     margin-bottom: 15px;
 }
 
-/* ---------- Action Buttons ---------- */
 .action-btn {
     padding: 6px 12px;
     border-radius: 6px;
@@ -453,7 +412,6 @@ tr:nth-child(even) {
     transform: translateY(-2px);
 }
 
-/* ---------- Bottom Add Button ---------- */
 .add-student-main {
     padding: 10px 20px;
     background: #2196F3;
