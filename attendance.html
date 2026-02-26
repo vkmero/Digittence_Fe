@@ -27,6 +27,14 @@
     <button class="btn btn-secondary" onclick="openSubjectModal()">+ Subject</button>
     <button class="btn btn-primary" onclick="openStudentModal()">+ Student</button>
 
+    <button class="btn btn-secondary" onclick="triggerFileUpload()">Upload List</button>
+
+    <input type="file"
+        id="studentFile"
+        accept=".xlsx,.csv"
+        style="display:none"
+        onchange="uploadStudentFile()">
+
 </div>
 
 <table>
@@ -43,7 +51,6 @@
 
 <br>
 
-<button class="add-student-main" onclick="openStudentModal()">+ Add Student</button>
 <button class="btn-primary" onclick="saveAttendance()">Save Attendance</button>
 
 </section>
@@ -253,6 +260,50 @@ async function saveAttendance() {
 
     } catch (error) {
         alert(error.message);
+    }
+}
+
+function triggerFileUpload() {
+    document.getElementById("studentFile").click();
+}
+
+async function uploadStudentFile() {
+    const fileInput = document.getElementById("studentFile");
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(
+            `http://localhost:5000/api/students/upload/${getClassId()}`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        alert(` ${data.count} students uploaded successfully`);
+
+        fileInput.value = "";
+        await loadStudentsTable(getClassId());
+
+    } catch (error) {
+        alert(error.message);
+        fileInput.value = "";
     }
 }
 </script>

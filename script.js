@@ -1,15 +1,25 @@
 const fetchAPI = async (url, method = 'GET', data = null) => {
-    const token = localStorage.getItem('token');
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    try {
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const options = { method, headers };
-    if (data) options.body = JSON.stringify(data);
+        const options = { method, headers };
+        if (data) options.body = JSON.stringify(data);
 
-    const res = await fetch(url, options);
-    const resData = await res.json();
-    if (!res.ok) throw new Error(resData.message || 'API Error');
-    return resData;
+        const res = await fetch(url, options);
+        const resData = await res.json();
+
+        if (!res.ok) {
+            throw new Error(resData.message || 'API Error');
+        }
+
+        return resData;
+
+    } catch (error) {
+        alert(error.message);   
+        throw error;            
+    }
 };
 
 const saveAuth = ({ token, facultyId, name, email }) => {
