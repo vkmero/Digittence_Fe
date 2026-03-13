@@ -53,7 +53,7 @@ async function initSubjects() {
 
 async function loadSubjects(classId) {
     try {
-        const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
+        const subjects = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/subjects/${classId}`);
         subjectsTable.innerHTML = '';
 
         subjects.forEach(s => {
@@ -72,7 +72,7 @@ addSubjectForm.addEventListener('submit', async e => {
         const name = document.getElementById('subjectName').value;
         const classId = getClassId();
 
-        await fetchAPI('http://localhost:5000/api/subjects', 'POST', {
+        await fetchAPI('https://digittence-be-ut26.onrender.com/api/subjects', 'POST', {
             name,
             class: classId
         });

@@ -94,7 +94,7 @@ async function initAttendance() {
 }
 
 async function loadSubjectsDropdown(classId) {
-    const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
+    const subjects = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/subjects/${classId}`);
     const select = document.getElementById("subjectSelect");
     select.innerHTML = "";
 
@@ -107,7 +107,7 @@ async function loadSubjectsDropdown(classId) {
 }
 
 async function loadStudentsTable(classId) {
-    students = await fetchAPI(`http://localhost:5000/api/students/${classId}`);
+    students = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${classId}`);
     const tbody = document.getElementById("studentsTable");
     tbody.innerHTML = "";
 
@@ -170,7 +170,7 @@ async function addSubject() {
     const name = document.getElementById("newSubjectName").value.trim();
     if (!name) return;
 
-    await fetchAPI("http://localhost:5000/api/subjects", "POST", {
+    await fetchAPI("https://digittence-be-ut26.onrender.com/api/subjects", "POST", {
         name,
         class: getClassId()
     });
@@ -205,12 +205,12 @@ async function addStudent() {
     if (!name || !rollNo) return;
 
     if (editingStudentId) {
-        await fetchAPI(`http://localhost:5000/api/students/${editingStudentId}`, "PUT", {
+        await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${editingStudentId}`, "PUT", {
             name,
             rollNo
         });
     } else {
-        await fetchAPI("http://localhost:5000/api/students", "POST", {
+        await fetchAPI("https://digittence-be-ut26.onrender.com/api/students", "POST", {
             name,
             rollNo,
             class: getClassId()
@@ -223,7 +223,7 @@ async function addStudent() {
 
 async function deleteStudentRow(id) {
     if (!confirm("Delete student?")) return;
-    await fetchAPI(`http://localhost:5000/api/students/${id}`, "DELETE");
+    await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${id}`, "DELETE");
     await loadStudentsTable(getClassId());
 }
 
@@ -245,7 +245,7 @@ async function saveAttendance() {
             status: s.status || "A"
         }));
 
-        await fetchAPI("http://localhost:5000/api/attendance", "POST", {
+        await fetchAPI("https://digittence-be-ut26.onrender.com/api/attendance", "POST", {
             class: classId,
             subject,
             date,
@@ -280,7 +280,7 @@ async function uploadStudentFile() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-            `http://localhost:5000/api/students/upload/${getClassId()}`,
+            `https://digittence-be-ut26.onrender.com/api/students/upload/${getClassId()}`,
             {
                 method: "POST",
                 headers: {

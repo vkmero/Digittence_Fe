@@ -56,7 +56,7 @@ async function loadSubjects() {
     const classId = getClassId();
 
     const subjects = await fetchAPI(
-        `http://localhost:5000/api/subjects/${classId}`
+        `https://digittence-be-ut26.onrender.com/api/subjects/${classId}`
     );
 
     const select = document.getElementById("reportSubject");
@@ -79,7 +79,7 @@ async function generateReport() {
 
         const token = localStorage.getItem('token');
 
-        const res = await fetch('http://localhost:5000/api/report', {
+        const res = await fetch('https://digittence-be-ut26.onrender.com/api/report', {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',

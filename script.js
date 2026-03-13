@@ -45,19 +45,19 @@ function goToPage(page) {
 }
 
 async function loginUser(email, password) {
-    const data = await fetchAPI('http://localhost:5000/api/auth/login', 'POST', { email, password });
+    const data = await fetchAPI('https://digittence-be-ut26.onrender.com/api/auth/login', 'POST', { email, password });
     saveAuth(data);
     window.location.href = 'dashboard.html';
 }
 
 async function registerUser(name, email, password) {
-    await fetchAPI('http://localhost:5000/api/auth/register', 'POST', { name, email, password });
+    await fetchAPI('https://digittence-be-ut26.onrender.com/api/auth/register', 'POST', { name, email, password });
     alert('Registration successful! Please login.');
     window.location.href = 'login.html';
 }
 
 async function loadStudents(classId, tableBodyId) {
-    const students = await fetchAPI(`http://localhost:5000/api/students/${classId}`);
+    const students = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${classId}`);
     const tbody = document.getElementById(tableBodyId);
     tbody.innerHTML = '';
     students.forEach(s => {
@@ -75,13 +75,13 @@ async function loadStudents(classId, tableBodyId) {
 
 async function deleteStudent(id, classId, tableBodyId) {
     if (confirm('Delete this student?')) {
-        await fetchAPI(`http://localhost:5000/api/students/${id}`, 'DELETE');
+        await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${id}`, 'DELETE');
         loadStudents(classId, tableBodyId);
     }
 }
 
 async function loadSubjects(classId, tableBodyId) {
-    const subjects = await fetchAPI(`http://localhost:5000/api/subjects/${classId}`);
+    const subjects = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/subjects/${classId}`);
     const tbody = document.getElementById(tableBodyId);
     tbody.innerHTML = '';
     subjects.forEach(s => {
@@ -102,7 +102,7 @@ async function submitAttendance(formId) {
             const hours = Number(document.getElementById('hours').value);
             const records = JSON.parse(document.getElementById('records').value);
 
-            await fetchAPI('http://localhost:5000/api/attendance', 'POST', { class: classId, subject, date, hours, records });
+            await fetchAPI('https://digittence-be-ut26.onrender.com/api/attendance', 'POST', { class: classId, subject, date, hours, records });
             alert('Attendance marked successfully!');
             form.reset();
         } catch(err) {
@@ -121,7 +121,7 @@ async function generateReport(formId) {
             const end = document.getElementById('endDate').value;
 
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/report', {
+            const res = await fetch('https://digittence-be-ut26.onrender.com/api/report', {
                 method: 'POST',
                 headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ classId, start, end })

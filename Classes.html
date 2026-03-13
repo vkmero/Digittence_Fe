@@ -34,7 +34,7 @@ const classList = document.getElementById('classList');
 const addClassForm = document.getElementById('addClassForm');
 
 async function loadClasses() {
-    const classes = await fetchAPI('http://localhost:5000/api/classes');
+    const classes = await fetchAPI('https://digittence-be-ut26.onrender.com/api/classes');
     classList.innerHTML = '';
 
     classes.forEach(c => {
@@ -58,7 +58,7 @@ addClassForm.addEventListener('submit', async e => {
     e.preventDefault();
     const className = document.getElementById('className').value;
 
-    await fetchAPI('http://localhost:5000/api/classes', 'POST', { className });
+    await fetchAPI('https://digittence-be-ut26.onrender.com/api/classes', 'POST', { className });
 
     addClassForm.reset();
     loadClasses();
@@ -74,7 +74,7 @@ async function editClass(id, currentName) {
     if (!newName || newName.trim() === "") return;
 
     await fetchAPI(
-        `http://localhost:5000/api/classes/${id}`,
+        `https://digittence-be-ut26.onrender.com/api/classes/${id}`,
         "PUT",
         { className: newName }
     );
@@ -87,7 +87,7 @@ async function deleteClass(id) {
     if (!confirmDelete) return;
 
     await fetchAPI(
-        `http://localhost:5000/api/classes/${id}`,
+        `https://digittence-be-ut26.onrender.com/api/classes/${id}`,
         "DELETE"
     );
 

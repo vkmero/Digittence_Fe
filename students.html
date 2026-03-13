@@ -57,7 +57,7 @@ async function initStudents() {
 
 async function loadStudents(classId) {
     try {
-        const students = await fetchAPI(`http://localhost:5000/api/students/${classId}`);
+        const students = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${classId}`);
         studentsTable.innerHTML = '';
 
         students.forEach(s => {
@@ -83,7 +83,7 @@ addStudentForm.addEventListener('submit', async e => {
         const rollNo = document.getElementById('rollNo').value;
         const classId = getClassId();
 
-        await fetchAPI('http://localhost:5000/api/students', 'POST', {
+        await fetchAPI('https://digittence-be-ut26.onrender.com/api/students', 'POST', {
             name,
             rollNo,
             class: classId
@@ -99,7 +99,7 @@ addStudentForm.addEventListener('submit', async e => {
 async function deleteStudent(id) {
     const classId = getClassId();
     if(confirm('Delete this student?')) {
-        await fetchAPI(`http://localhost:5000/api/students/${id}`, 'DELETE');
+        await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${id}`, 'DELETE');
         loadStudents(classId);
     }
 }
