@@ -607,3 +607,80 @@ tr:nth-child(even) {
 .delete-btn-class:hover {
     background: #c62828;
 }
+
+@media (max-width: 768px) {
+
+    .navbar {
+        padding: 18px 25px;
+    }
+
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 25px;
+        gap: 35px;
+    }
+
+    .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .hero-content h2 {
+        font-size: 20px;
+    }
+
+    .hero-content p {
+        max-width: 100%;
+        font-size: 14px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 10px 22px;
+        font-size: 14px;
+    }
+
+    .hero-image img {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .features {
+        padding: 60px 25px;
+    }
+
+    .features h2 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero-content h1 {
+        font-size: 30px;
+    }
+
+    .hero-content h2 {
+        font-size: 18px;
+    }
+
+    .hero-content p {
+        font-size: 13px;
+    }
+
+    .navbar h2 {
+        font-size: 20px;
+    }
+
+    .hero-image img {
+        max-width: 260px;
+    }
+
+}
