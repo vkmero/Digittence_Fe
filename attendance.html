@@ -113,24 +113,18 @@ async function loadStudentsTable(classId) {
 
     students.forEach(s => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${s.name}</td>
-            <td>${s.rollNo}</td>
-            <td>
-                <button id="p-${s._id}" class="attendance-btn inactive"
-                    onclick="setStatus('${s._id}','P')">P</button>
-
-                <button id="a-${s._id}" class="attendance-btn inactive"
-                    onclick="setStatus('${s._id}','A')">A</button>
-            </td>
-            <td>
-                <button class="action-btn edit-btn"
-                    onclick="openEditStudent('${s._id}','${s.name}','${s.rollNo}')">Edit</button>
-
-                <button class="action-btn delete-btn"
-                    onclick="deleteStudentRow('${s._id}')">Delete</button>
-            </td>
-        `;
+tr.innerHTML = `
+  <td data-label="Name">${s.name}</td>
+  <td data-label="Roll No">${s.rollNo}</td>
+  <td data-label="Status">
+    <button id="p-${s._id}" class="attendance-btn inactive" onclick="setStatus('${s._id}','P')">P</button>
+    <button id="a-${s._id}" class="attendance-btn inactive" onclick="setStatus('${s._id}','A')">A</button>
+  </td>
+  <td data-label="Actions">
+    <button class="action-btn edit-btn" onclick="openEditStudent('${s._id}','${s.name}','${s.rollNo}')">Edit</button>
+    <button class="action-btn delete-btn" onclick="deleteStudentRow('${s._id}')">Delete</button>
+  </td>
+`;
         tbody.appendChild(tr);
     });
 }
