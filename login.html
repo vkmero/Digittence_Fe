@@ -8,6 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+    <style>
+.btn-primary:disabled { opacity: 0.75; cursor: not-allowed; }
+.spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
 
@@ -55,10 +65,11 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    if(!email || !password) {
-        alert("Please fill all fields");
-        return;
-    }
+    if(!email || !password) { alert("Please fill all fields"); return; }
+
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Loading...';
 
     try {
         const res = await fetch('https://digittence-be-ut26.onrender.com/api/auth/login', {
@@ -66,14 +77,18 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-
         const data = await res.json();
-        if (!res.ok) return alert(data.message);
-
+        if (!res.ok) {
+            btn.disabled = false;
+            btn.innerHTML = 'Login';
+            alert(data.message);
+            return;
+        }
         localStorage.setItem('token', data.token);
         window.location.href = 'dashboard.html';
-
     } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = 'Login';
         alert("Server not reachable");
     }
 });

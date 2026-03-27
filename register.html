@@ -8,6 +8,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+
+    <style>
+.btn-primary:disabled { opacity: 0.75; cursor: not-allowed; }
+.spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
 
@@ -39,9 +50,9 @@
             <span class="toggle-password" onclick="togglePassword()">👁️</span>
         </div>
 
-        <button type="submit" class="btn-primary ripple" style="width:100%;">
-            Register
-        </button>
+        <button type="submit" id="registerBtn" class="btn-primary ripple" style="width:100%;">
+    Register
+</button>
 
         <p style="margin-top:15px; text-align:center;">
             Already have an account?
@@ -61,21 +72,23 @@ function togglePassword() {
 document.getElementById('registerForm').addEventListener('submit', async e => {
     e.preventDefault();
 
+    const btn = document.getElementById('registerBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Loading...';
+
     try {
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
         await fetchAPI('https://digittence-be-ut26.onrender.com/api/auth/register', 'POST', {
-            name,
-            email,
-            password
+            name, email, password
         });
-
         alert("Registration successful! Please login.");
         window.location.href = 'login.html';
-
     } catch(err) {
+        btn.disabled = false;
+        btn.innerHTML = 'Register';
         alert(err.message);
     }
 });
