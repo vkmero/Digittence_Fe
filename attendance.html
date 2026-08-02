@@ -398,6 +398,9 @@ async function loadSubjectsDropdown(classId) {
 
 async function loadStudentsTable(classId) {
   students = await fetchAPI(`https://digittence-be-ut26.onrender.com/api/students/${classId}`);
+  students.forEach(student => {
+    student.status = "P";
+  });
   renderStudents();
 }
 
@@ -408,15 +411,19 @@ function renderStudents() {
     return;
   }
   list.innerHTML = students.map(s => `
-    <div class="student-card" id="card-${s._id}">
+    <div class="student-card ${s.status === 'A' ? 'is-absent' : 'is-present'}" id="card-${s._id}">
       <div class="student-info">
         <span class="student-name">${s.name}</span>
         <span class="student-roll">${s.rollNo}</span>
       </div>
       <div class="student-actions">
         <div class="pa-group">
-          <button class="pa-btn" id="p-${s._id}" onclick="setStatus('${s._id}','P')">P</button>
-          <button class="pa-btn" id="a-${s._id}" onclick="setStatus('${s._id}','A')">A</button>
+          <button
+              class="pa-btn ${s.status === 'A' ? 'active-a' : 'active-p'}"
+              onclick="toggleAbsent('${s._id}')">
+
+              ${s.status === "A" ? "Absent" : "Present"}
+          </button>
         </div>
         <div class="edit-del-group">
           <button class="mini-btn mini-edit"   onclick="openEditStudent('${s._id}','${s.name}','${s.rollNo}')">Edit</button>
@@ -427,18 +434,17 @@ function renderStudents() {
   `).join('');
 }
 
-function setStatus(studentId, status) {
-  const student = students.find(s => String(s._id) === String(studentId));
+function toggleAbsent(studentId) {
+
+  const student = students.find(
+    s => String(s._id) === String(studentId)
+  );
+
   if (!student) return;
-  student.status = status;
 
-  const pBtn = document.getElementById(`p-${studentId}`);
-  const aBtn = document.getElementById(`a-${studentId}`);
-  const card = document.getElementById(`card-${studentId}`);
+  student.status = student.status === "A" ? "P" : "A";
 
-  pBtn.className = 'pa-btn' + (status === 'P' ? ' active-p' : '');
-  aBtn.className = 'pa-btn' + (status === 'A' ? ' active-a' : '');
-  card.className = 'student-card ' + (status === 'P' ? 'is-present' : 'is-absent');
+  renderStudents();
 }
 
 function openSubjectModal() {
@@ -497,10 +503,16 @@ async function saveAttendance() {
   const date    = document.getElementById("date").value;
   const hours   = Number(document.getElementById("hours").value);
   if (!subject || !date || !hours) { alert("Please fill all fields."); return; }
-  const records = students.map(s => ({ student: s._id, status: s.status || "A" }));
+  const records = students
+    .filter(s => s.status === "A")
+    .map(s => ({
+        student: s._id
+    }));
   await fetchAPI("https://digittence-be-ut26.onrender.com/api/attendance", "POST", { class: classId, subject, date, hours, records });
   alert("Attendance Saved!");
-  students.forEach(s => delete s.status);
+  students.forEach(s => {
+      s.status = "P";
+  });
   renderStudents();
 }
 
