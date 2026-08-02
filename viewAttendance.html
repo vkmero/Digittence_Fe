@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Attendance | Digittence</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:url("https://images.unsplash.com/photo-1519389950473-47ba0277781c") center/cover fixed;
+    min-height:100vh;
+    color:white;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:0;
+}
+
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 16px;
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.navbar h2{
+    font-size:18px;
+}
+
+.nav-btn{
+    padding:8px 18px;
+    border:none;
+    border-radius:20px;
+    background:rgba(255,255,255,.2);
+    color:white;
+    cursor:pointer;
+}
+
+.page{
+    position:relative;
+    z-index:1;
+    max-width:650px;
+    margin:auto;
+    padding:20px;
+}
+
+.filters-card{
+
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(14px);
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.2);
+    padding:18px;
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.filters-card input,
+.filters-card select{
+
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.15);
+    color:white;
+    outline:none;
+}
+
+.filters-card option{
+    background:#1a1a2e;
+}
+
+.filters-card input[type=date]::-webkit-calendar-picker-indicator{
+    filter:invert(1);
+}
+
+.btn{
+
+    width:100%;
+    padding:14px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#2196F3;
+    color:white;
+
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+.students-list{
+
+    margin-top:20px;
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.student-card{
+
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(10px);
+
+    border-radius:14px;
+
+    padding:14px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.student-info{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.student-name{
+
+    font-size:16px;
+    font-weight:600;
+}
+
+.student-roll{
+
+    color:rgba(255,255,255,.6);
+}
+
+.pa-group{
+
+    display:flex;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.pa-btn{
+
+    flex:1;
+    padding:10px;
+
+    border:none;
+
+    cursor:pointer;
+
+    background:transparent;
+    color:white;
+
+    font-weight:600;
+}
+
+.active-p{
+    background:#00c853;
+}
+
+.active-a{
+    background:#e53935;
+}
+
+.save-btn{
+
+    width:100%;
+    margin-top:20px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:linear-gradient(135deg,#00c853,#00e5ff);
+
+    font-size:17px;
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+.empty-state{
+
+    text-align:center;
+    opacity:.6;
+    margin-top:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<nav class="navbar">
+    <h2>View Attendance</h2>
+
+    <button class="nav-btn" onclick="logout()">
+        Logout
+    </button>
+</nav>
+
+<div class="page">
+
+<div class="filters-card">
+
+<input type="date" id="date">
+
+<select id="subjectSelect">
+    <option>Select Subject</option>
+</select>
+
+<select id="slotSelect">
+    <option value="1">Attendance Slot 1</option>
+</select>
+
+<button class="btn" onclick="loadAttendance()">
+Load Attendance
+</button>
+
+</div>
+
+<div class="students-list" id="studentsList">
+
+<div class="empty-state">
+
+Select date, subject and slot to load attendance.
+
+</div>
+
+</div>
+
+<button class="save-btn" onclick="updateAttendance()">
+
+Update Attendance
+
+</button>
+
+</div>
+
+<script src="script.js"></script>
+
+<script>
+
+function getClassId(){
+
+    const id=localStorage.getItem("selectedClass");
+
+    if(!id){
+
+        window.location.href="classes.html";
+
+    }
+
+    return id;
+
+}
+
+async function initPage(){
+
+    const classId=getClassId();
+
+    document.getElementById("date").valueAsDate=new Date();
+
+    const subjects=await fetchAPI(
+`https://digittence-be-ut26.onrender.com/api/subjects/${classId}`
+);
+
+    const select=document.getElementById("subjectSelect");
+
+    select.innerHTML=subjects.map(s=>`
+<option value="${s.name}">
+${s.name}
+</option>
+`).join('');
+
+}
+
+function loadAttendance(){
+
+    alert("Backend API will be connected in next step.");
+
+}
+
+function updateAttendance(){
+
+    alert("Backend API will be connected in next step.");
+
+}
+
+window.onload=()=>{
+
+checkAuth();
+
+initPage();
+
+};
+
+</script>
+
+</body>
+</html>
