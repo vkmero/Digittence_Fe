@@ -128,11 +128,18 @@ async function generateReport(formId) {
             });
 
             if (!res.ok) throw new Error('Failed to generate report');
+
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
+
+            const className =
+                (localStorage.getItem("selectedClassName") || "Attendance")
+                .replace(/[\\/:*?"<>|]/g, "_");
+
+            const a = document.createElement("a");
             a.href = url;
-            a.download = 'attendance_report.xlsx';
+            a.download = `${className}_Report.xlsx`;
+
             document.body.appendChild(a);
             a.click();
             a.remove();

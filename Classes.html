@@ -160,7 +160,7 @@ async function loadClasses() {
     <div class="class-card">
       <div class="class-name">${c.className}</div>
       <div class="class-btns">
-        <button class="btn-open"   onclick="openClass('${c._id}')">Open</button>
+        <button class="btn-open" onclick="openClass('${c._id}','${c.className}')">Open</button>
         <button class="btn-edit"   onclick="editClass('${c._id}','${c.className}')">Edit</button>
         <button class="btn-delete" onclick="deleteClass('${c._id}')">Delete</button>
       </div>
@@ -177,8 +177,19 @@ async function createClass() {
 }
 
 function openClass(id) {
-  localStorage.setItem('selectedClass', id);
-  window.location.href = 'class.html';
+
+  const classes = Array.from(document.querySelectorAll(".class-card"));
+
+  const classCard = classes.find(card => {
+    return card.querySelector(".btn-open").getAttribute("onclick").includes(id);
+  });
+
+  const className = classCard.querySelector(".class-name").textContent;
+
+  localStorage.setItem("selectedClass", id);
+  localStorage.setItem("selectedClassName", className);
+
+  window.location.href = "class.html";
 }
 
 async function editClass(id, currentName) {

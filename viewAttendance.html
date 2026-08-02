@@ -239,7 +239,7 @@ body{
 </select>
 
 <select id="slotSelect">
-    <option value="1">Attendance Slot 1</option>
+    <option value="">Select Attendance Slot</option>
 </select>
 
 <button class="btn" onclick="loadAttendance()">
@@ -270,60 +270,223 @@ Update Attendance
 
 <script>
 
-function getClassId(){
+let students = [];
 
-    const id=localStorage.getItem("selectedClass");
+function getClassId() {
+    const id = localStorage.getItem("selectedClass");
 
-    if(!id){
-
-        window.location.href="classes.html";
-
+    if (!id) {
+        window.location.href = "classes.html";
     }
 
     return id;
+}
+
+async function initPage() {
+
+    const classId = getClassId();
+
+    document.getElementById("date").valueAsDate = new Date();
+
+    const subjects = await fetchAPI(
+        `https://digittence-be-ut26.onrender.com/api/subjects/${classId}`
+    );
+
+    const select = document.getElementById("subjectSelect");
+
+    select.innerHTML = "";
+
+    subjects.forEach(subject => {
+
+        const option = document.createElement("option");
+
+        option.value = subject.name;
+        option.textContent = subject.name;
+
+        select.appendChild(option);
+    });
+
+    document.getElementById("subjectSelect")
+    .addEventListener("change", loadSlots);
+
+    document.getElementById("date")
+        .addEventListener("change", loadSlots);
+
+    await loadSlots();
 
 }
 
-async function initPage(){
+async function loadSlots() {
 
-    const classId=getClassId();
+    const classId = getClassId();
 
-    document.getElementById("date").valueAsDate=new Date();
+    const subject = document.getElementById("subjectSelect").value;
+    const date = document.getElementById("date").value;
 
-    const subjects=await fetchAPI(
-`https://digittence-be-ut26.onrender.com/api/subjects/${classId}`
-);
+    const slotSelect = document.getElementById("slotSelect");
 
-    const select=document.getElementById("subjectSelect");
+    slotSelect.innerHTML = "";
 
-    select.innerHTML=subjects.map(s=>`
-<option value="${s.name}">
-${s.name}
-</option>
-`).join('');
+    if (!subject || !date) return;
+
+    const slots = await fetchAPI(
+
+        `https://digittence-be-ut26.onrender.com/api/attendance/slots?classId=${classId}&subject=${subject}&date=${date}`
+
+    );
+
+    if (!slots.length) {
+
+        slotSelect.innerHTML =
+            `<option value="">No Slots Found</option>`;
+
+        return;
+    }
+
+    slots.forEach(slot => {
+
+        const option = document.createElement("option");
+
+        option.value = slot;
+
+        option.textContent = `Attendance Slot ${slot}`;
+
+        slotSelect.appendChild(option);
+
+    });
 
 }
 
-function loadAttendance(){
+async function loadAttendance() {
 
-    alert("Backend API will be connected in next step.");
+    const classId = getClassId();
+
+    const subject = document.getElementById("subjectSelect").value;
+    const date = document.getElementById("date").value;
+    const attendanceSlot = document.getElementById("slotSelect").value;
+
+    if (!subject || !date || !attendanceSlot) {
+        alert("Please select all fields.");
+        return;
+    }
+
+    students = await fetchAPI(
+        `https://digittence-be-ut26.onrender.com/api/attendance?classId=${classId}&subject=${subject}&date=${date}&attendanceSlot=${attendanceSlot}`
+    );
+
+    renderStudents();
 
 }
 
-function updateAttendance(){
+function renderStudents() {
 
-    alert("Backend API will be connected in next step.");
+    const list = document.getElementById("studentsList");
+
+    if (!students.length) {
+
+        list.innerHTML = `
+            <div class="empty-state">
+                No attendance found.
+            </div>
+        `;
+
+        return;
+    }
+
+    list.innerHTML = students.map(student => `
+
+        <div class="student-card ${student.status === "A" ? "is-absent" : "is-present"}">
+
+            <div class="student-info">
+
+                <span class="student-name">
+                    ${student.name}
+                </span>
+
+                <span class="student-roll">
+                    ${student.rollNo}
+                </span>
+
+            </div>
+
+            <div class="pa-group">
+
+                <button
+                    class="pa-btn ${student.status === "P" ? "active-p" : "active-a"}"
+                    onclick="toggleAttendance('${student._id}')">
+
+                    ${student.status === "P" ? "Present" : "Absent"}
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `).join("");
 
 }
 
-window.onload=()=>{
+function toggleAttendance(studentId) {
 
-checkAuth();
+    const student = students.find(
+        s => String(s._id) === String(studentId)
+    );
 
-initPage();
+    if (!student) return;
+
+    student.status = student.status === "P" ? "A" : "P";
+
+    renderStudents();
+
+}
+
+async function updateAttendance() {
+
+    const classId = getClassId();
+
+    const subject = document.getElementById("subjectSelect").value;
+
+    const date = document.getElementById("date").value;
+
+    const attendanceSlot =
+        document.getElementById("slotSelect").value;
+
+    const records = students.map(student => ({
+
+        student: student._id,
+
+        status: student.status
+
+    }));
+
+    await fetchAPI(
+
+        "https://digittence-be-ut26.onrender.com/api/attendance",
+
+        "PUT",
+
+        {
+            classId,
+            subject,
+            date,
+            attendanceSlot,
+            records
+        }
+
+    );
+
+    alert("Attendance Updated Successfully");
+
+}
+
+window.onload = () => {
+
+    checkAuth();
+
+    initPage();
 
 };
-
 </script>
 
 </body>
